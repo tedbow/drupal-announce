@@ -23,8 +23,9 @@ function announce_toolbar() {
   }
   $data = [];
   $client = \Drupal::httpClient();
-  //$host = \Drupal::request()->getHost();
+  // $host = \Drupal::request()->getHost();
   try {
+    // $response = $client->get($host . '/community-aanounce.php');.
     $response = $client->get('https://my-json-server.typicode.com/haris-m-aslam/demo-json/posts');
     $result = $response->getBody();
     $data = json_decode($result, TRUE);

@@ -2,6 +2,6 @@ announce-list:
   version: 1.x
   css:
     theme:
-      css/announce.min.css: {}
+      css/announce.css: {}
   js:
     js/announce.js: {}
