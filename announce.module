@@ -1,0 +1,68 @@
+<?php
+
+/**
+ * @file
+ * Adds contextual links to perform actions related to elements on a page.
+ */
+
+/**
+ * Implements hook_toolbar().
+ */
+function announce_toolbar() {
+  $items = [];
+  $items['announce'] = [
+    '#cache' => [
+      'contexts' => [
+        'user.permissions',
+      ],
+    ],
+  ];
+
+  if (!\Drupal::currentUser()->hasPermission('access announce link')) {
+    return $items;
+  }
+  $data = [];
+  $client = \Drupal::httpClient();
+  //$host = \Drupal::request()->getHost();
+  try {
+    $response = $client->get('https://my-json-server.typicode.com/haris-m-aslam/demo-json/posts');
+    $result = $response->getBody();
+    $data = json_decode($result, TRUE);
+  }
+  catch (RequestException $e) {
+    watchdog_exception('my_module', $e->getMessage());
+  }
+
+  $items['announce'] += [
+    '#type' => 'toolbar_item',
+    'tab' => [
+      // '#type' => 'html_tag',
+      // '#tag' => 'button',.
+      '#value' => t('Announce'),
+      '#theme' => 'announce_list',
+      '#items' => $data,
+      '#attached' => [
+        'library' => [
+          'announce/announce-list',
+        ],
+      ],
+    ],
+    '#wrapper_attributes' => [
+      'class' => ['announce-toolbar-tab'],
+    ],
+    '#weight' => 3399,
+  ];
+
+  return $items;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function announce_theme($existing, $type, $theme, $path) {
+  return [
+    'announce_list' => [
+      'variables' => ['items' => NULL],
+    ],
+  ];
+}

@@ -1,0 +1,5 @@
+name: Community Announce
+description: Module for notify latest updates from drupal community
+package: Custom
+type: module
+core: 8.x
