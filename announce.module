@@ -5,6 +5,8 @@
  * Adds contextual links to perform actions related to elements on a page.
  */
 
+use Drupal\Core\Url;
+
 /**
  * Implements hook_toolbar().
  */
@@ -37,16 +39,25 @@ function announce_toolbar() {
   $items['announce'] += [
     '#type' => 'toolbar_item',
     'tab' => [
-      // '#type' => 'html_tag',
-      // '#tag' => 'button',.
-      '#value' => t('Announce'),
-      '#theme' => 'announce_list',
-      '#items' => $data,
+      '#type' => 'link',
+      '#title' => t('Alerts'),
+      '#url' => Url::fromRoute('system.admin'),
+      '#attributes' => [
+        'title' => t('Announce'),
+        'class' => ['toolbar-icon', 'toolbar-icon-shortcut', 'use-ajax'],
+        'data-dialog-renderer' => 'off_canvas',
+        'data-dialog-type' => 'dialog',
+        'data-dialog-options' => '{"width":"30%"}',
+      ],
       '#attached' => [
         'library' => [
-          'announce/announce-list',
+          'core/drupal.dialog.ajax',
         ],
       ],
+
+    ],
+    'tray' => [
+      '#markup' => '<h1>hello</h1>',
     ],
     '#wrapper_attributes' => [
       'class' => ['announce-toolbar-tab'],
