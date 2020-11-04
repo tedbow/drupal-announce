@@ -9,10 +9,21 @@ use Drupal\Core\Url;
 
 /**
  * Implements hook_toolbar().
+ *
+ * This shows 2 different ways you could show announcement from the toolbar.
+ * 1 as a toolbar tray and 1 as link using off-canvas. You would not need both
+ * ways.
  */
 function announce_toolbar() {
   $items = [];
-  $items['announce'] = [
+  $items['announce_off_canvas'] = [
+    '#cache' => [
+      'contexts' => [
+        'user.permissions',
+      ],
+    ],
+  ];
+  $items['announce_tray'] = [
     '#cache' => [
       'contexts' => [
         'user.permissions',
@@ -23,24 +34,13 @@ function announce_toolbar() {
   if (!\Drupal::currentUser()->hasPermission('access announce link')) {
     return $items;
   }
-  $data = [];
-  $client = \Drupal::httpClient();
-  // $host = \Drupal::request()->getHost();
-  try {
-    // $response = $client->get($host . '/community-aanounce.php');.
-    $response = $client->get('https://my-json-server.typicode.com/haris-m-aslam/demo-json/posts');
-    $result = $response->getBody();
-    $data = json_decode($result, TRUE);
-  }
-  catch (RequestException $e) {
-    watchdog_exception('my_module', $e->getMessage());
-  }
 
-  $items['announce'] += [
+  $items['announce_off_canvas'] += [
     '#type' => 'toolbar_item',
     'tab' => [
       '#type' => 'link',
-      '#title' => t('Alerts'),
+      '#title' => t('Alerts(off-canvas)'),
+      // @todo Create route to list items.
       '#url' => Url::fromRoute('system.admin'),
       '#attributes' => [
         'title' => t('Announce'),
@@ -56,15 +56,33 @@ function announce_toolbar() {
       ],
 
     ],
-    'tray' => [
-      '#markup' => '<h1>hello</h1>',
-    ],
     '#wrapper_attributes' => [
       'class' => ['announce-toolbar-tab'],
     ],
     '#weight' => 3399,
   ];
 
+  $items['announce_tray'] += [
+    '#type' => 'toolbar_item',
+    'tab' => [
+      '#type' => 'link',
+      '#title' => t('Alerts(tray)'),
+      '#url' => Url::fromRoute('system.admin'),
+      '#attributes' => [
+        'title' => t('Announce'),
+        'class' => ['toolbar-icon', 'toolbar-icon-shortcut'],
+      ],
+    ],
+    '#wrapper_attributes' => [
+      'class' => ['announce-toolbar-tab'],
+    ],
+    'tray' => [
+      // @todo using lazy loading for actual items
+      // @see user_toolbar()
+      '#markup' => '<h1>Tester</h1>'
+    ],
+    '#weight' => 3399,
+  ];
   return $items;
 }
 

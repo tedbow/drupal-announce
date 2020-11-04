@@ -1,7 +1,0 @@
-announce-list:
-  version: 1.x
-  css:
-    theme:
-      css/announce.css: {}
-  js:
-    js/announce.js: {}
